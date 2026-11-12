@@ -142,14 +142,44 @@ document.getElementById("registerForm").addEventListener("submit", async functio
   }
 
 });
+async function loadApprovedProfiles(){
+  const {data,error} = await db
+    .from("approved_profiles")
+    .select("*");
 
+  const box = document.getElementById("approvedProfiles");
+
+  if(error){
+    box.textContent = "रिश्ते लोड नहीं हो पाए।";
+    return;
+  }
+
+  box.innerHTML = "";
+
+  data.forEach(p=>{
+    const card = document.createElement("div");
+    card.className = "profile";
+    card.textContent =
+      p.full_name + " | " + p.gender + " | " +
+      p.city + " | " + p.state + " | " + p.education;
+    box.appendChild(card);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", loadApprovedProfiles);
 </script>
 
 
 
 
 
+<section id="approved">
 
+  <h2>Verified Jain Profiles</h2>
+
+  <div id="approvedProfiles">रिश्ते लोड हो रहे हैं...</div>
+
+</section>
 </body>
 
 </html>
