@@ -52,13 +52,103 @@ section{padding:25px}
 
 <h2>निःशुल्क रजिस्ट्रेशन</h2>
 
-<p>जल्द ही अपना जीवनसाथी खोजें।</p>
+<p>अपनी जानकारी भरें और अपना जीवनसाथी खोजें।</p>
 
-<button onclick="alert('Registration सुविधा जल्द शुरू होगी')">Register Now</button>
+<form id="registerForm">
+
+<input type="text" name="full_name" placeholder="पूरा नाम" required>
+
+<select name="gender" required>
+
+<option value="">लिंग चुनें</option>
+
+<option value="Male">पुरुष</option>
+
+<option value="Female">महिला</option>
+
+</select>
+
+<input type="tel" name="mobile" placeholder="मोबाइल नंबर" required>
+
+<input type="text" name="city" placeholder="शहर" required>
+
+<input type="text" name="state" placeholder="राज्य" required>
+
+<input type="text" name="education" placeholder="शिक्षा">
+
+<input type="text" name="occupation" placeholder="व्यवसाय">
+
+<button type="submit">रजिस्ट्रेशन करें</button>
+
+</form>
 
 </section>
 
+
+
+
+
+
+
+
+
 <footer>© Jain Rishta Setu</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const supabaseUrl = "https://fumusgxzafvluidpjxqc.supabase.co";
+
+const supabaseKey = "sb_publishable_wQ98cLAS75kE_vbpeduhaA_ZNdtNh96";
+
+const db = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+document.getElementById("registerForm").addEventListener("submit", async function(e) {
+
+  e.preventDefault();
+
+  const formData = new FormData(this);
+
+  const profile = {
+
+    full_name: formData.get("full_name"),
+
+    gender: formData.get("gender"),
+
+    mobile: formData.get("mobile"),
+
+    city: formData.get("city"),
+
+    state: formData.get("state"),
+
+    education: formData.get("education"),
+
+    occupation: formData.get("occupation")
+
+  };
+
+  const { error } = await db.from("profiles").insert([profile]);
+
+  if (error) {
+
+    alert("Registration failed: " + error.message);
+
+  } else {
+
+    alert("रजिस्ट्रेशन सफल हुआ!");
+
+    this.reset();
+
+  }
+
+});
+
+</script>
+
+
+
+
+
 
 </body>
 
