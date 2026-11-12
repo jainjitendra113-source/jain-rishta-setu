@@ -1,0 +1,123 @@
+
+
+<!DOCTYPE html>
+
+<html lang="hi">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Jain Rishta Setu Admin</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+body{font-family:Arial;background:#f5f1eb;padding:20px}
+
+.box{max-width:700px;margin:auto;background:white;padding:22px;border-radius:15px}
+
+input,button{width:100%;padding:13px;margin:8px 0;box-sizing:border-box}
+
+button{background:#681d35;color:white;border:0;border-radius:8px}
+
+.profile{padding:12px;border-bottom:1px solid #ddd}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>Jain Rishta Setu</h2>
+
+<h3>Admin Login</h3>
+
+<input id="email" type="email" placeholder="Admin Email">
+
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="login()">Login</button>
+
+<button onclick="logout()">Logout</button>
+
+<h3>Registered Profiles</h3>
+
+<div id="result">Login करके प्रोफाइल देखें।</div>
+
+</div>
+
+<script>
+
+const supabaseUrl = "https://fumusgxzafvluidpjxqc.supabase.co";
+
+const supabaseKey = "sb_publishable_wQ98cLAS75kE_vbpeduhaA_ZNdtNh96";
+
+const db = window.supabase.createClient(supabaseUrl,supabaseKey);
+
+async function login(){
+
+const {data,error}=await db.auth.signInWithPassword({
+
+email:document.getElementById("email").value,
+
+password:document.getElementById("password").value
+
+});
+
+if(error){alert(error.message);return;}
+
+loadProfiles();
+
+}
+
+async function loadProfiles(){
+
+const {data,error}=await db.from("profiles").select("*");
+
+if(error){alert(error.message);return;}
+
+document.getElementById("result").innerHTML="";
+
+data.forEach(p=>{
+
+document.getElementById("result").innerHTML+=`
+
+<div class="profile">
+
+<b>${p.full_name||""}</b><br>
+
+मोबाइल: ${p.mobile||""}<br>
+
+शहर: ${p.city||""}<br>
+
+राज्य: ${p.state||""}<br>
+
+शिक्षा: ${p.education||""}<br>
+
+व्यवसाय: ${p.occupation||""}
+
+</div>`;
+
+});
+
+}
+
+async function logout(){
+
+await db.auth.signOut();
+
+document.getElementById("result").innerHTML="आप Logout हो गए हैं।";
+
+}
+
+</script>
+
+</body>
+
+</html>
