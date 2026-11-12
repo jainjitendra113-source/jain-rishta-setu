@@ -101,7 +101,13 @@ document.getElementById("result").innerHTML+=`
 शिक्षा: ${p.education||""}<br>
 
 व्यवसाय: ${p.occupation||""}
+<br><br>
 
+स्थिति: ${p.approval_status || "pending"}<br>
+
+<button onclick="updateStatus('${p.id}','approved')">Approve</button>
+
+<button onclick="updateStatus('${p.id}','rejected')">Reject</button>
 </div>`;
 
 });
@@ -115,7 +121,23 @@ await db.auth.signOut();
 document.getElementById("result").innerHTML="आप Logout हो गए हैं।";
 
 }
+async function updateStatus(id, status){
+  const {error} = await db
+    .from("profiles")
+    .update({
+      approval_status: status,
+      is_approved: status === "approved"
+    })
+    .eq("id", id);
 
+  if(error){
+    alert(error.message);
+    return;
+  }
+
+  alert("Profile updated!");
+  loadProfiles();
+}
 </script>
 
 </body>
