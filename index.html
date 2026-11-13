@@ -149,6 +149,8 @@ if (photoFile) {
 }
   const profile = {
 profile_photo: photoUrl,
+    approval_status: "pending",
+is_approved: false,
     full_name: formData.get("full_name"),
 
     gender: formData.get("gender"),
