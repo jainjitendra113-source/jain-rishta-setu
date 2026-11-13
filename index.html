@@ -182,29 +182,75 @@ is_approved: false,
   }
 
 });
-async function loadApprovedProfiles(){
-  const {data,error} = await db
+async function loadApprovedProfiles() {
+  const { data, error } = await db
     .from("approved_profiles")
     .select("*");
 
   const box = document.getElementById("approvedProfiles");
 
-  if(error){
+  if (error) {
     box.textContent = "रिश्ते लोड नहीं हो पाए।";
     return;
   }
 
   box.innerHTML = "";
 
-  data.forEach(p=>{
+  for (const p of data) {
     const card = document.createElement("div");
     card.className = "profile";
-    card.textContent =
+
+    if (p.profile_photo) {
+      const { data: photo, error: photoError } =
+        await db.storage
+          .from("Profile Photo")
+          .createSignedUrl(p.profile_photo, 3600);
+
+      if (!photoError && photo?.signedUrl) {
+        const img = document.createElement("img");
+        img.src = photo.signedUrl;
+        img.alt = "Profile Photo";
+        img.style.width = "120px";
+        img.style.height = "120px";
+        img.style.objectFit = "cover";
+        img.style.borderRadius = "12px";
+        card.appendChild(img);
+      }
+    }
+
+    const details = document.createElement("p");
+    details.textContent =
       p.full_name + " | " + p.gender + " | " +
       p.city + " | " + p.state + " | " + p.education;
+
+    card.appendChild(details);
     box.appendChild(card);
-  });
+  }
 }
+
+document.addEventListener("DOMContentLoaded", loadApprovedProfiles);
+  
+    
+    
+
+  
+
+  
+    
+    
+  
+
+  
+
+  
+    
+    
+    
+      
+      
+    
+  
+
 
 document.addEventListener("DOMContentLoaded", loadApprovedProfiles);
 </script>
