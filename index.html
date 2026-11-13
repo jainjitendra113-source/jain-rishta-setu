@@ -248,8 +248,7 @@ async function loadApprovedProfiles() {
 
     const details = document.createElement("p");
     details.textContent =
-      p.full_name + " | " + p.gender + " | " +
-      p.city + " | " + p.state + " | " + p.education;
+      p.full_name + " | " + "शहर: Paid Members के लिए उपलब्ध"  + " | " + p.state + " | " + p.education;
 const bioBtn = document.createElement("button");
 bioBtn.textContent = "Biodata देखें";
 bioBtn.onclick = async () => {
