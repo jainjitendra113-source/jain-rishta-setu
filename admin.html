@@ -75,7 +75,7 @@ password:document.getElementById("password").value
 if(error){alert(error.message);return;}
 
 loadProfiles();
-
+loadPayments();
 }
 
 async function loadProfiles(){
@@ -155,6 +155,38 @@ async function updateStatus(id, status){
 
   alert("Profile updated!");
   loadProfiles();
+}
+async function loadPayments(){
+  const {data,error} = await db
+    .from("membership_payments")
+    .select("*")
+    .order("created_at",{ascending:false});
+
+  const box = document.getElementById("payments");
+  if(!box) return;
+
+  if(error){
+    box.textContent = "Payment error: " + error.message;
+    return;
+  }
+
+  box.innerHTML = "";
+
+  if(!data || data.length === 0){
+    box.textContent = "अभी कोई भुगतान अनुरोध नहीं है।";
+    return;
+  }
+
+  data.forEach(p=>{
+    const card = document.createElement("div");
+    card.className = "profile";
+    card.textContent =
+      "नाम: " + p.full_name +
+      " | मोबाइल: " + p.mobile +
+      " | प्लान: " + p.plan +
+      " | स्थिति: " + p.status;
+    box.appendChild(card);
+  });
 }
 </script>
 
