@@ -136,7 +136,28 @@ document.getElementById("registerForm").addEventListener("submit", async functio
 
   const formData = new FormData(this);
 const photoFile = document.getElementById("profilePhoto").files[0];
+const biodataFile = document.getElementById("biodataFile").files[0];
+let biodataUrl = "";
 
+if (biodataFile) {
+  if (biodataFile.type !== "application/pdf" || biodataFile.size > 5 * 1024 * 1024) {
+    alert("केवल 5 MB तक की PDF अपलोड करें।");
+    return;
+  }
+
+  const biodataName = Date.now() + "_" + biodataFile.name;
+
+  const { error: biodataError } = await db.storage
+    .from("Member Biodata")
+    .upload(biodataName, biodataFile);
+
+  if (biodataError) {
+    alert("बायोडाटा अपलोड नहीं हुआ: " + biodataError.message);
+    return;
+  }
+
+  biodataUrl = biodataName;
+}
 let photoUrl = "";
 
 if (photoFile) {
@@ -155,6 +176,7 @@ if (photoFile) {
 }
   const profile = {
 profile_photo: photoUrl,
+    biodata_url: biodataUrl,
     approval_status: "pending",
 is_approved: false,
     full_name: formData.get("full_name"),
