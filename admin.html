@@ -185,8 +185,31 @@ async function loadPayments(){
       " | मोबाइल: " + p.mobile +
       " | प्लान: " + p.plan +
       " | स्थिति: " + p.status;
+    const approveBtn = document.createElement("button");
+approveBtn.textContent = "Approve Payment";
+approveBtn.onclick = () => updatePaymentStatus(p.id, "approved");
+card.appendChild(approveBtn);
+
+const rejectBtn = document.createElement("button");
+rejectBtn.textContent = "Reject Payment";
+rejectBtn.onclick = () => updatePaymentStatus(p.id, "rejected");
+card.appendChild(rejectBtn);
     box.appendChild(card);
   });
+}
+async function updatePaymentStatus(id, status) {
+  const { error } = await db
+    .from("membership_payments")
+    .update({ status: status })
+    .eq("id", id);
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  alert("Payment status updated!");
+  loadPayments();
 }
 </script>
 
