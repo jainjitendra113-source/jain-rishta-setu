@@ -459,6 +459,95 @@ document.getElementById("logoutBtn").addEventListener("click", async function() 
   document.getElementById("logoutBtn").style.display = "none";
 });
 </script>
+<section id="myMembership" style="padding:20px;margin:20px auto;max-width:450px;border:1px solid #ddd;border-radius:12px;">
+
+  <h2>My Membership</h2>
+
+  <p id="membershipInfo">Membership देखने के लिए Login करें।</p>
+
+  <button id="loadMembership" type="button">My Membership देखें</button>
+
+</section>
+
+<script>
+
+document.getElementById("loadMembership").addEventListener("click", async function() {
+
+  const info = document.getElementById("membershipInfo");
+
+  const { data: userData } = await db.auth.getUser();
+
+  if (!userData.user) {
+
+    info.textContent = "पहले Email से Login करें।";
+
+    return;
+
+  }
+
+  const { data: profile, error: profileError } = await db
+
+    .from("profiles")
+
+    .select("id")
+
+    .eq("email", userData.user.email)
+
+    .maybeSingle();
+
+  if (profileError || !profile) {
+
+    info.textContent = "आपकी Profile नहीं मिली।";
+
+    return;
+
+  }
+
+  const { data, error } = await db
+
+    .from("memberships")
+
+    .select("plan,status,starts_at,expires_at")
+
+    .eq("profile_id", profile.id)
+
+    .order("created_at", { ascending: false })
+
+    .limit(1)
+
+    .maybeSingle();
+
+  if (error) {
+
+    info.textContent = "Membership लोड नहीं हुई: " + error.message;
+
+    return;
+
+  }
+
+  if (!data) {
+
+    info.textContent = "अभी आपकी कोई Paid Membership नहीं है।";
+
+    return;
+
+  }
+
+  const expiry = data.expires_at
+
+    ? new Date(data.expires_at).toLocaleDateString("en-IN")
+
+    : "Lifetime";
+
+  info.textContent = "प्लान: " + data.plan +
+
+    " | स्थिति: " + data.status +
+
+    " | Expiry: " + expiry;
+
+});
+
+</script>
 </body>
 
 </html>
