@@ -185,6 +185,11 @@ async function loadPayments(){
       " | मोबाइल: " + p.mobile +
       " | प्लान: " + p.plan +
       " | स्थिति: " + p.status;
+    if (p.screenshot_url) {
+  const proof = document.createElement("p");
+  proof.innerHTML = `<a href="${p.screenshot_url}" target="_blank">Payment Screenshot देखें</a>`;
+  card.appendChild(proof);
+}
     const approveBtn = document.createElement("button");
 approveBtn.textContent = "Approve Payment";
 approveBtn.onclick = () => updatePaymentStatus(p.id, "approved");
