@@ -84,12 +84,19 @@ if(error){alert(error.message);return;}
 
 document.getElementById("result").innerHTML="";
 
-data.forEach(p=>{
+for (const p of data) {
+let photoUrl = "";
+if (p.profile_photo) {
+  const { data: photo } = await db.storage
+    .from("Profile Photo")
+    .createSignedUrl(p.profile_photo, 3600);
 
+  if (photo) photoUrl = photo.signedUrl;
+}
 document.getElementById("result").innerHTML+=`
 
 <div class="profile">
-
+${photoUrl ? `<img src="${photoUrl}" width="100" style="border-radius:10px"><br>` : ""}
 <b>${p.full_name||""}</b><br>
 
 मोबाइल: ${p.mobile||""}<br>
