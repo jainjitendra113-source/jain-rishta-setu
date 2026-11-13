@@ -417,7 +417,10 @@ document.getElementById("sendOtpBtn").addEventListener("click", async function()
 
   const { error } = await db.auth.signInWithOtp({
     email: email,
-    options: { shouldCreateUser: false }
+    options: {
+  shouldCreateUser: false,
+  emailRedirectTo: "https://jainjitendra113-source.github.io/jain-rishta-setu/"
+}
   });
 
   if (error) {
