@@ -129,9 +129,26 @@ document.getElementById("registerForm").addEventListener("submit", async functio
   e.preventDefault();
 
   const formData = new FormData(this);
+const photoFile = document.getElementById("profilePhoto").files[0];
 
+let photoUrl = "";
+
+if (photoFile) {
+  const fileName = Date.now() + "_" + photoFile.name;
+
+  const { data: uploadData, error: uploadError } = await db.storage
+    .from("Profile Photo")
+    .upload(fileName, photoFile);
+
+  if (uploadError) {
+    alert("फोटो अपलोड नहीं हुई: " + uploadError.message);
+    return;
+  }
+
+  photoUrl = fileName;
+}
   const profile = {
-
+profile_photo: photoUrl,
     full_name: formData.get("full_name"),
 
     gender: formData.get("gender"),
