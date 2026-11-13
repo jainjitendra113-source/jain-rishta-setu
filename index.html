@@ -137,7 +137,7 @@ if (photoFile) {
   const fileName = Date.now() + "_" + photoFile.name;
 
   const { data: uploadData, error: uploadError } = await db.storage
-    .from("Profile Photo")
+    .from("profile-photo")
     .upload(fileName, photoFile);
 
   if (uploadError) {
