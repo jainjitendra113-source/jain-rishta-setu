@@ -281,6 +281,28 @@ document.addEventListener("DOMContentLoaded", loadApprovedProfiles);
 
 
 document.addEventListener("DOMContentLoaded", loadApprovedProfiles);
+document.getElementById("paymentForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const inputs = this.querySelectorAll("input");
+  const plan = this.querySelector("select").value;
+
+  const { error } = await db.from("membership_payments").insert({
+    full_name: inputs[0].value,
+    mobile: inputs[1].value,
+    plan: plan,
+    transaction_id: inputs[2].value,
+    status: "pending"
+  });
+
+  if (error) {
+    alert("भुगतान जानकारी सेव नहीं हुई: " + error.message);
+    return;
+  }
+
+  alert("भुगतान की जानकारी सफलतापूर्वक भेज दी गई!");
+  this.reset();
+});
 </script>
 
 
