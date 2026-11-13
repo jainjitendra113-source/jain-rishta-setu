@@ -382,6 +382,80 @@ style="width:260px;max-width:90%;border:1px solid #ddd;border-radius:12px;">
 
 </div>
 </section>
+<section id="member-login" style="padding:25px;max-width:450px;margin:20px auto;border:1px solid #ddd;border-radius:12px;">
+  <h2>Member Login</h2>
+  <p>अपना Email डालकर OTP प्राप्त करें।</p>
+
+  <input type="email" id="loginEmail" placeholder="अपना Email लिखें"
+    style="width:100%;padding:12px;margin:10px 0;box-sizing:border-box;">
+
+  <button id="sendOtpBtn" type="button" style="padding:12px 20px;">
+    Send Login OTP
+  </button>
+
+  <div id="otpBox" style="display:none;margin-top:15px;">
+    <input type="text" id="loginOtp" placeholder="Email OTP डालें"
+      style="width:100%;padding:12px;box-sizing:border-box;">
+    <button id="verifyOtpBtn" type="button" style="padding:12px 20px;margin-top:10px;">
+      Verify OTP & Login
+    </button>
+  </div>
+
+  <p id="loginMessage"></p>
+  <button id="logoutBtn" type="button" style="display:none;">Logout</button>
+</section>
+
+<script>
+document.getElementById("sendOtpBtn").addEventListener("click", async function() {
+  const email = document.getElementById("loginEmail").value.trim();
+  const msg = document.getElementById("loginMessage");
+
+  if (!email) {
+    msg.textContent = "अपना Email लिखें।";
+    return;
+  }
+
+  const { error } = await db.auth.signInWithOtp({
+    email: email,
+    options: { shouldCreateUser: false }
+  });
+
+  if (error) {
+    msg.textContent = error.message;
+    return;
+  }
+
+  document.getElementById("otpBox").style.display = "block";
+  msg.textContent = "आपके Email पर Login Code भेजा गया है।";
+});
+
+document.getElementById("verifyOtpBtn").addEventListener("click", async function() {
+  const email = document.getElementById("loginEmail").value.trim();
+  const token = document.getElementById("loginOtp").value.trim();
+  const msg = document.getElementById("loginMessage");
+
+  const { error } = await db.auth.verifyOtp({
+    email: email,
+    token: token,
+    type: "email"
+  });
+
+  if (error) {
+    msg.textContent = error.message;
+    return;
+  }
+
+  msg.textContent = "Login सफल हुआ!";
+  document.getElementById("logoutBtn").style.display = "block";
+});
+
+document.getElementById("logoutBtn").addEventListener("click", async function() {
+  const { error } = await db.auth.signOut();
+  document.getElementById("loginMessage").textContent =
+    error ? error.message : "आप Logout हो गए हैं।";
+  document.getElementById("logoutBtn").style.display = "none";
+});
+</script>
 </body>
 
 </html>
