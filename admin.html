@@ -118,7 +118,7 @@ ${photoUrl ? `<img src="${photoUrl}" width="100" style="border-radius:10px"><br>
 
 व्यवसाय: ${p.occupation||""}
 <br><br>
-
+${biodataUrl ? `<a href="${biodataUrl}" target="_blank">बायोडाटा देखें / डाउनलोड करें</a><br>` : "बायोडाटा उपलब्ध नहीं"} 
 स्थिति: ${p.approval_status || "pending"}<br>
 
 <button onclick="updateStatus('${p.id}','approved')">Approve</button>
