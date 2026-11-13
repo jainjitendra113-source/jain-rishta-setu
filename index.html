@@ -288,13 +288,38 @@ document.getElementById("paymentForm").addEventListener("submit", async function
   const inputs = this.querySelectorAll("input");
   const plan = this.querySelector("select").value;
 
-  const { error } = await db.from("membership_payments").insert({
-    full_name: inputs[0].value,
-    mobile: inputs[1].value,
-    plan: plan,
-    transaction_id: inputs[2].value,
-    status: "pending"
-  });
+  const screenshotFile = inputs[3].files[0];
+
+if (!screenshotFile) {
+  alert("Payment Screenshot चुनें");
+  return;
+}
+
+const screenshotPath = Date.now() + "_" + screenshotFile.name;
+
+const { error: uploadError } = await db.storage
+  .from("Member Biodata")
+  .upload(screenshotPath, screenshotFile);
+
+if (uploadError) {
+  alert(uploadError.message);
+  return;
+}
+
+const { error } = await db.from("membership_payments").insert({
+  full_name: inputs[0].value,
+  mobile: inputs[1].value,
+  plan: plan,
+  transaction_id: inputs[2].value,
+  screenshot_url: screenshotPath,
+  status: "pending"
+});
+    
+    
+    
+    
+    
+  
 
   if (error) {
     alert("भुगतान जानकारी सेव नहीं हुई: " + error.message);
