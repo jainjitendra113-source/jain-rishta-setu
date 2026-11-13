@@ -93,6 +93,15 @@ if (p.profile_photo) {
 
   if (photo) photoUrl = photo.signedUrl;
 }
+let biodataUrl = "";
+
+if (p.biodata_url) {
+  const { data: biodata } = await db.storage
+    .from("Member Biodata")
+    .createSignedUrl(p.biodata_url, 3600);
+
+  if (biodata) biodataUrl = biodata.signedUrl;
+}  
 document.getElementById("result").innerHTML+=`
 
 <div class="profile">
