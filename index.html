@@ -250,7 +250,27 @@ async function loadApprovedProfiles() {
     details.textContent =
       p.full_name + " | " + p.gender + " | " +
       p.city + " | " + p.state + " | " + p.education;
-
+const bioBtn = document.createElement("button");
+bioBtn.textContent = "Biodata देखें";
+bioBtn.onclick = async () => {
+  const { data: userData } = await db.auth.getUser();
+  if (!userData.user) {
+    alert("पहले Member Login करें");
+    return;
+  }
+  const { data: result, error } = await db.rpc("get_member_biodata_path", {
+    target_profile_id: p.id
+  });
+  if (error || !result) {
+    alert("Biodata देखने के लिए Active Paid Membership जरूरी है");
+    return;
+  }
+  const { data: file } = await db.storage
+    .from("Member Biodata")
+    .createSignedUrl(result, 300);
+  if (file?.signedUrl) window.open(file.signedUrl, "_blank");
+};
+card.appendChild(bioBtn);
     card.appendChild(details);
     box.appendChild(card);
   }
