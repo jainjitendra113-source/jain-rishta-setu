@@ -3,7 +3,13 @@
 <html lang="hi">
 
 <head>
+<link rel="manifest" href="/jain-rishta-setu/manifest.json">
 
+<meta name="theme-color" content="#600018">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<meta name="apple-mobile-web-app-title" content="Jain Rishta">
 <meta charset="UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -926,6 +932,23 @@ Jain Rishta Setu केवल एक विवाह परिचय वेब�
   <p>अपनी विवाह सफलता की कहानी हमारे साथ साझा करें।</p>
 
 </section>
+<script>
+
+if ("serviceWorker" in navigator) {
+
+  window.addEventListener("load", () => {
+
+    navigator.serviceWorker.register(
+
+      "/jain-rishta-setu/service-worker.js"
+
+    );
+
+  });
+
+}
+
+</script>
 </body>
 
 </html>
