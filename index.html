@@ -220,6 +220,10 @@ footer{background:var(--jrs-wine)!important;color:var(--jrs-gold-light)!importan
  section{padding:26px 14px!important}
 }
 
+textarea, select, input{max-width:100%;box-sizing:border-box}
+#registerForm h3{color:#64152f;border-bottom:1px solid #d4af37;padding-bottom:6px;margin-top:22px}
+#registerForm label{display:block;text-align:left;margin:10px auto 4px;max-width:520px;font-weight:bold}
+#registerForm input,#registerForm select,#registerForm textarea{width:min(100%,520px);padding:12px;margin:6px auto;border:1px solid #d4af37;border-radius:9px;background:#fffdf8}
 </style>
 
 </head>
@@ -336,6 +340,57 @@ Welcome to Jain Rishta Setu
 
 <input type="text" name="occupation" placeholder="व्यवसाय">
 
+<h3>व्यक्तिगत एवं वैवाहिक जानकारी</h3>
+<label>जन्म तारीख</label>
+<input type="date" name="date_of_birth">
+<input type="text" name="height" placeholder="लंबाई (जैसे 5 फुट 6 इंच)">
+<select name="marital_status">
+  <option value="">वैवाहिक स्थिति चुनें</option>
+  <option value="Never Married">अविवाहित</option>
+  <option value="Divorced">तलाकशुदा</option>
+  <option value="Widowed">विधवा / विधुर</option>
+  <option value="Separated">अलग रह रहे हैं</option>
+</select>
+<input type="number" name="children_count" min="0" placeholder="बच्चों की संख्या (यदि लागू हो)">
+
+<h3>जैन समाज एवं धार्मिक जानकारी</h3>
+<select name="sampraday">
+  <option value="">जैन संप्रदाय चुनें</option>
+  <option value="Digambar">दिगंबर</option>
+  <option value="Shwetambar">श्वेतांबर</option>
+  <option value="Other">अन्य</option>
+</select>
+<input type="text" name="sub_sampraday" placeholder="उप-संप्रदाय / परंपरा">
+<input type="text" name="gotra" placeholder="गोत्र">
+<input type="text" name="maternal_gotra" placeholder="ननिहाल / मातृ गोत्र (वैकल्पिक)">
+<input type="text" name="community" placeholder="जैन समाज / समुदाय">
+
+<h3>परिवार की जानकारी</h3>
+<input type="text" name="father_name" placeholder="पिता का नाम">
+<input type="text" name="father_occupation" placeholder="पिता का व्यवसाय">
+<input type="text" name="mother_name" placeholder="माता का नाम">
+<input type="text" name="mother_occupation" placeholder="माता का व्यवसाय">
+<input type="number" name="brothers" min="0" placeholder="भाई (संख्या)">
+<input type="number" name="sisters" min="0" placeholder="बहनें (संख्या)">
+<input type="text" name="family_origin" placeholder="मूल निवास / पैतृक शहर">
+<textarea name="family_description" placeholder="परिवार का संक्षिप्त परिचय" rows="3"></textarea>
+
+<h3>जन्म एवं कुंडली (वैकल्पिक)</h3>
+<input type="time" name="birth_time" aria-label="जन्म समय">
+<input type="text" name="birth_place" placeholder="जन्म स्थान">
+<input type="text" name="rashi" placeholder="राशि">
+<select name="kundli_available">
+  <option value="">कुंडली उपलब्ध?</option>
+  <option value="Yes">हाँ</option>
+  <option value="No">नहीं</option>
+</select>
+
+<h3>जीवनसाथी संबंधी पसंद (वैकल्पिक)</h3>
+<input type="text" name="partner_age_preference" placeholder="पसंदीदा उम्र सीमा">
+<input type="text" name="partner_education_preference" placeholder="पसंदीदा शिक्षा">
+<input type="text" name="partner_location_preference" placeholder="पसंदीदा शहर / राज्य">
+<textarea name="partner_expectations" placeholder="अन्य अपेक्षाएँ" rows="3"></textarea>
+
 <label>अपना पूरा बायोडाटा (PDF) अपलोड करें</label>
 
 <input type="file" id="biodataFile" accept=".pdf,application/pdf">
@@ -430,7 +485,8 @@ email: formData.get("email"),
 
     education: formData.get("education"),
 
-    occupation: formData.get("occupation")
+    occupation: formData.get("occupation"),
+    date_of_birth: formData.get("date_of_birth"),\n    height: formData.get("height"),\n    marital_status: formData.get("marital_status"),\n    children_count: formData.get("children_count"),\n    sampraday: formData.get("sampraday"),\n    sub_sampraday: formData.get("sub_sampraday"),\n    gotra: formData.get("gotra"),\n    maternal_gotra: formData.get("maternal_gotra"),\n    community: formData.get("community"),\n    father_name: formData.get("father_name"),\n    father_occupation: formData.get("father_occupation"),\n    mother_name: formData.get("mother_name"),\n    mother_occupation: formData.get("mother_occupation"),\n    brothers: formData.get("brothers"),\n    sisters: formData.get("sisters"),\n    family_origin: formData.get("family_origin"),\n    family_description: formData.get("family_description"),\n    birth_time: formData.get("birth_time"),\n    birth_place: formData.get("birth_place"),\n    rashi: formData.get("rashi"),\n    kundli_available: formData.get("kundli_available"),\n    partner_age_preference: formData.get("partner_age_preference"),\n    partner_education_preference: formData.get("partner_education_preference"),\n    partner_location_preference: formData.get("partner_location_preference"),\n    partner_expectations: formData.get("partner_expectations")
 
   };
 
