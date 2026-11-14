@@ -131,7 +131,18 @@ ${photoUrl ? `<img src="${photoUrl}" width="100" style="border-radius:10px"><br>
 
 शिक्षा: ${p.education||""}<br>
 
-व्यवसाय: ${p.occupation||""}
+व्यवसाय: ${p.occupation||""}<br>
+पिता: ${p.father_name||"—"} | माता: ${p.mother_name||"—"}<br>
+गोत्र: ${p.gotra||"—"} | संप्रदाय: ${p.sampraday||"—"} ${p.sub_sampraday||""}<br>
+वैवाहिक स्थिति: ${p.marital_status||"—"} | जन्म तारीख: ${p.date_of_birth||"—"}<br>
+लंबाई: ${p.height||"—"} | भाई: ${p.brothers??"—"} | बहनें: ${p.sisters??"—"}<br>
+पिता का व्यवसाय: ${p.father_occupation||"—"} | माता का व्यवसाय: ${p.mother_occupation||"—"}<br>
+मूल निवास: ${p.family_origin||"—"}<br>
+परिवार परिचय: ${p.family_description||"—"}<br>
+जन्म समय/स्थान: ${p.birth_time||"—"} / ${p.birth_place||"—"} | राशि: ${p.rashi||"—"}<br>
+कुंडली: ${p.kundli_available||"—"}<br>
+जीवनसाथी की पसंद: ${p.partner_age_preference||"—"}; ${p.partner_education_preference||"—"}; ${p.partner_location_preference||"—"}<br>
+अन्य अपेक्षाएँ: ${p.partner_expectations||"—"}
 <br><br>
 ${biodataUrl ? `<a href="${biodataUrl}" target="_blank">बायोडाटा देखें / डाउनलोड करें</a><br>` : "बायोडाटा उपलब्ध नहीं"} 
 स्थिति: ${p.approval_status || "pending"}<br>
