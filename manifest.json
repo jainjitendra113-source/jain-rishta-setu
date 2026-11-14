@@ -1,0 +1,23 @@
+{
+  "name": "Jain Rishta Setu",
+  "short_name": "Jain Rishta",
+  "description": "जैन समाज का विश्वसनीय रिश्ता मंच",
+  "start_url": "/jain-rishta-setu/",
+  "scope": "/jain-rishta-setu/",
+  "display": "standalone",
+  "background_color": "#fff8e7",
+  "theme_color": "#600018",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/jain-rishta-setu/app-icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/jain-rishta-setu/app-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
