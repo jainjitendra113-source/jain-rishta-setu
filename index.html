@@ -470,7 +470,29 @@ async function loadApprovedProfiles() {
         img.style.width = "120px";
         img.style.height = "120px";
         img.style.objectFit = "cover";
-        img.style.borderRadius = "12px";
+        img.style.borderRadius = "50%";
+        img.style.width = "132px";
+        img.style.height = "132px";
+        img.style.objectFit = "cover";
+        img.style.display = "block";
+        img.style.margin = "0 auto 14px";
+        img.style.cursor = "zoom-in";
+        img.title = "बड़ी फोटो देखने के लिए क्लिक करें";
+        img.addEventListener("click", () => {
+          let viewer = document.getElementById("jrsPhotoViewer");
+          if (!viewer) {
+            viewer = document.createElement("div");
+            viewer.id = "jrsPhotoViewer";
+            viewer.innerHTML = '<button type="button" aria-label="बंद करें" style="position:absolute;top:18px;right:22px;font-size:28px;padding:4px 14px!important;z-index:2">×</button><img alt="बड़ी प्रोफाइल फोटो" style="max-width:min(90vw,720px);max-height:85vh;object-fit:contain;border:3px solid #c9a24a;border-radius:18px;box-shadow:0 15px 50px #0008">';
+            Object.assign(viewer.style, {position:"fixed",inset:"0",zIndex:"99999",background:"rgba(20,4,10,.88)",display:"none",alignItems:"center",justifyContent:"center",padding:"24px"});
+            viewer.querySelector("button").addEventListener("click", () => viewer.style.display="none");
+            viewer.addEventListener("click", e => { if (e.target === viewer) viewer.style.display="none"; });
+            document.body.appendChild(viewer);
+            document.addEventListener("keydown", e => { if (e.key === "Escape") viewer.style.display="none"; });
+          }
+          viewer.querySelector("img").src = img.src;
+          viewer.style.display = "flex";
+        });
         card.appendChild(img);
       }
     }
