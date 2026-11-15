@@ -224,29 +224,6 @@ textarea, select, input{max-width:100%;box-sizing:border-box}
 #registerForm h3{color:#64152f;border-bottom:1px solid #d4af37;padding-bottom:6px;margin-top:22px}
 #registerForm label{display:block;text-align:left;margin:10px auto 4px;max-width:520px;font-weight:bold}
 #registerForm input,#registerForm select,#registerForm textarea{width:min(100%,520px);padding:12px;margin:6px auto;border:1px solid #d4af37;border-radius:9px;background:#fffdf8}
-
-/* ROYAL MEMBERSHIP PRICING */
-#membership{padding:clamp(28px,5vw,60px) 16px!important;background:radial-gradient(circle at top,#fff7e4,#f3e5d2 72%)!important}
-#membership>h2{font-size:clamp(27px,4vw,38px);margin-bottom:8px}
-#membership .membership-intro{max-width:760px;margin:0 auto 28px;color:#725b60}
-#membership .plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:20px;max-width:1120px;margin:28px auto 42px;align-items:stretch}
-#membership .plan-card{position:relative;text-align:left;padding:24px 22px 22px;background:linear-gradient(155deg,#fffefa,#fff3dc);border:1px solid #c9a24a;border-radius:22px;box-shadow:0 12px 30px #3b07181a;display:flex;flex-direction:column;gap:12px;overflow:hidden}
-#membership .plan-card:before{content:'';position:absolute;inset:0 0 auto;height:6px;background:linear-gradient(90deg,#8d6827,#e8d18b,#b58b36)}
-#membership .plan-card.featured{background:linear-gradient(150deg,#4a0a20,#761c39);color:#fff4d7;box-shadow:0 16px 36px #3b071833;transform:translateY(-4px)}
-#membership .plan-card.featured h3,#membership .plan-card.featured .plan-price,#membership .plan-card.featured .plan-duration{color:#f7e7b0}
-#membership .plan-card h3{font-size:20px;margin:5px 0 0;color:#4a0a20}
-#membership .plan-price{font-size:32px;font-weight:800;color:#4a0a20;line-height:1.2}
-#membership .plan-duration{font-size:14px;color:#806a59}
-#membership .plan-tag{align-self:flex-start;padding:4px 11px;border-radius:99px;background:#f0dfb2;color:#543717;font:bold 11px Arial,sans-serif;letter-spacing:.4px}
-#membership .plan-card.featured .plan-tag{background:#d4af37;color:#32101b}
-#membership .plan-card details{border-top:1px solid #d9c79f;padding-top:10px;margin-top:2px}
-#membership .plan-card.featured details{border-color:#9c6b62}
-#membership .plan-card summary{cursor:pointer;font-weight:bold;color:inherit;padding:4px 0}
-#membership .plan-card ul{padding-left:19px;margin:10px 0;color:inherit;line-height:1.8;font-size:14px}
-#membership .plan-card .pay-btn{display:block;text-align:center;text-decoration:none;margin: auto 0 0;background:linear-gradient(135deg,#d9b85f,#b58b36)!important;color:#35101b!important;border:1px solid #f0d98e!important;border-radius:12px!important}
-#membership .payment-panel{max-width:720px;margin:20px auto;padding:24px 18px;background:#fffdf8;border:1px solid #c9a24a;border-radius:22px;box-shadow:0 12px 30px #3b07181a}
-@media(max-width:640px){#membership .plan-card.featured{transform:none}}
-
 </style>
 
 </head>
@@ -645,12 +622,30 @@ async function loadApprovedProfiles() {
 
   box.innerHTML = "";
 
+  // सार्वजनिक प्रोफाइल में फोटो केवल Active Paid Members को दिखेगी।
+  let viewerHasPaidMembership = false;
+  const { data: viewerData } = await db.auth.getUser();
+  if (viewerData?.user?.email) {
+    const { data: viewerProfile } = await db.from("profiles")
+      .select("id").eq("email", viewerData.user.email).maybeSingle();
+    if (viewerProfile?.id) {
+      const { data: viewerMembership } = await db.from("memberships")
+        .select("status,expires_at").eq("profile_id", viewerProfile.id)
+        .order("created_at", { ascending: false }).limit(1).maybeSingle();
+      const viewerExpiry = viewerMembership?.expires_at
+        ? new Date(viewerMembership.expires_at).getTime() : Infinity;
+      viewerHasPaidMembership = !!viewerMembership
+        && ["active", "approved"].includes(String(viewerMembership.status).toLowerCase())
+        && viewerExpiry >= Date.now();
+    }
+  }
+
   for (const p of data) {
     const card = document.createElement("div");
     card.className = "profile profile-card";
 
     const photoWrap = document.createElement("div");
-    if (p.profile_photo) {
+    if (viewerHasPaidMembership && p.profile_photo) {
       const { data: photo, error: photoError } = await db.storage
         .from("Profile Photo")
         .createSignedUrl(p.profile_photo, 3600);
@@ -682,9 +677,19 @@ async function loadApprovedProfiles() {
       const placeholder = document.createElement("div");
       placeholder.className = "jrs-photo-placeholder";
       placeholder.textContent = (p.full_name || "J").trim().charAt(0).toUpperCase();
+      placeholder.setAttribute("aria-label", "फोटो केवल Active Paid Members के लिए उपलब्ध");
+      placeholder.title = viewerHasPaidMembership
+        ? "प्रोफाइल फोटो उपलब्ध नहीं"
+        : "प्रोफाइल फोटो देखने के लिए Active Paid Membership लें";
       photoWrap.appendChild(placeholder);
     }
     card.appendChild(photoWrap);
+    if (!viewerHasPaidMembership && p.profile_photo) {
+      const photoLock = document.createElement("small");
+      photoLock.textContent = "🔒 फोटो केवल Paid Members के लिए";
+      photoLock.style.cssText = "display:block;color:#8a6a25;font:600 12px Arial,sans-serif;margin-top:-4px";
+      card.appendChild(photoLock);
+    }
     const approvedBadge = document.createElement("span");
     approvedBadge.className = "jrs-approved";
     approvedBadge.textContent = "Approved Profile";
@@ -799,64 +804,52 @@ const { error } = await db.from("membership_payments").insert({
   <div id="approvedProfiles">रिश्ते लोड हो रहे हैं...</div>
 
 </section>
-<section id="membership">
-<h2>Jain Rishta Setu Membership Plans</h2>
-<p class="membership-intro">अपने परिवार की आवश्यकता के अनुसार सदस्यता चुनें। हर प्लान की सुविधाएँ जानने के लिए “सुविधाएँ देखें” खोलें।</p>
+<section id="membership" class="jrs-membership">
+<style>
+.jrs-membership{padding:38px 16px!important;text-align:center;background:linear-gradient(180deg,#fffaf2,#f1e4d4)!important;border-top:2px solid #c9a24a}
+.jrs-membership .plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:18px;max-width:1120px;margin:26px auto}
+.jrs-membership .plan-card{background:linear-gradient(150deg,#fffefa,#fff1d8);border:1px solid #c9a24a;border-radius:20px;padding:22px 18px;box-shadow:0 9px 24px #3b07181a;text-align:left;display:flex;flex-direction:column}
+.jrs-membership .plan-card h3{margin:0 0 8px;color:#520b20;text-align:center}
+.jrs-membership .plan-price{text-align:center;font-size:29px;font-weight:bold;color:#8a344d;margin:8px}
+.jrs-membership .plan-duration{text-align:center;color:#76666a;margin:0 0 12px}
+.jrs-membership .plan-card details{border-top:1px solid #ead9b6;padding-top:12px;margin-top:8px;color:#442832}
+.jrs-membership .plan-card summary{cursor:pointer;color:#64152f;font-weight:bold;text-align:center;padding:7px}
+.jrs-membership .plan-card ul{padding-left:20px;line-height:1.8}
+.jrs-membership .plan-card .pay-btn{display:block;text-align:center;text-decoration:none;margin-top:auto}
+.jrs-membership .plan-note{max-width:850px;margin:15px auto;color:#6b5960;font-size:14px}
+@media(max-width:600px){.jrs-membership .plan-grid{grid-template-columns:1fr}}
+</style>
+<h2>Jain Rishta Setu – सदस्यता योजनाएँ</h2>
+<p>अपनी जरूरत और सुविधा के अनुसार सदस्यता चुनें।</p>
 <div class="plan-grid">
-  <article class="plan-card"><span class="plan-tag">STARTER</span><h3>परिचय प्लान</h3><div class="plan-price">₹499</div><div class="plan-duration">3 महीने की सदस्यता</div><details><summary>इस प्लान की सुविधाएँ देखें</summary><ul><li>सदस्यता अवधि में Verified Profiles देखना</li><li>चुने हुए प्रोफाइल का बायोडाटा देखना</li><li>सदस्य सहायता के माध्यम से सामान्य मार्गदर्शन</li></ul></details><a href="#payment" class="pay-btn">Pay Now ₹499</a></article>
-  <article class="plan-card"><span class="plan-tag">VALUE</span><h3>सिल्वर प्लान</h3><div class="plan-price">₹999</div><div class="plan-duration">7 महीने की सदस्यता</div><details><summary>इस प्लान की सुविधाएँ देखें</summary><ul><li>सदस्यता अवधि में Verified Profiles देखना</li><li>चुने हुए प्रोफाइल का बायोडाटा देखना</li><li>रिश्ते के लिए संपर्क अनुरोध भेजने में सहायता</li><li>सामान्य सदस्य सहायता</li></ul></details><a href="#payment" class="pay-btn">Pay Now ₹999</a></article>
-  <article class="plan-card featured"><span class="plan-tag">POPULAR</span><h3>गोल्ड प्लान</h3><div class="plan-price">₹1,999</div><div class="plan-duration">18 महीने की सदस्यता</div><details><summary>इस प्लान की सुविधाएँ देखें</summary><ul><li>18 महीने तक Verified Profiles देखना</li><li>चुने हुए प्रोफाइल का बायोडाटा देखना</li><li>रिश्ते के लिए संपर्क अनुरोध में सहायता</li><li>प्राथमिकता के साथ सदस्य सहायता</li></ul></details><a href="#payment" class="pay-btn">Pay Now ₹1,999</a></article>
-  <article class="plan-card"><span class="plan-tag">LONG TERM</span><h3>लाइफटाइम प्लान</h3><div class="plan-price">₹2,999</div><div class="plan-duration">लाइफटाइम सदस्यता</div><details><summary>इस प्लान की सुविधाएँ देखें</summary><ul><li>प्लेटफॉर्म की उपलब्ध सदस्य सुविधाओं का लाइफटाइम उपयोग</li><li>Verified Profiles देखना</li><li>चुने हुए प्रोफाइल का बायोडाटा देखना</li><li>सामान्य सदस्य सहायता</li></ul></details><a href="#payment" class="pay-btn">Pay Now ₹2,999</a></article>
-  <article class="plan-card"><span class="plan-tag">PERSONAL SUPPORT</span><h3>पर्सनल हेल्प – 6 महीने</h3><div class="plan-price">₹5,999</div><div class="plan-duration">6 महीने की व्यक्तिगत सहायता</div><details><summary>इस प्लान की सुविधाएँ देखें</summary><ul><li>सदस्यता अवधि में प्रोफाइल खोजने में व्यक्तिगत सहायता</li><li>परिवार की पसंद के अनुसार उपयुक्त प्रोफाइल छाँटने में मदद</li><li>परिचय और बातचीत आगे बढ़ाने में मार्गदर्शन</li><li>नियमित सहायता और फॉलो-अप</li></ul></details><a href="#payment" class="pay-btn">Pay Now ₹5,999</a></article>
-  <article class="plan-card"><span class="plan-tag">PREMIUM SUPPORT</span><h3>पर्सनल हेल्प – 2 साल</h3><div class="plan-price">₹11,999</div><div class="plan-duration">2 साल की व्यक्तिगत सहायता</div><details><summary>इस प्लान की सुविधाएँ देखें</summary><ul><li>2 साल तक व्यक्तिगत रिश्ता खोज सहायता</li><li>परिवार की पसंद के अनुसार प्रोफाइल शॉर्टलिस्ट करने में मदद</li><li>परिचय और बातचीत आगे बढ़ाने में मार्गदर्शन</li><li>नियमित फॉलो-अप और प्राथमिकता सहायता</li></ul></details><a href="#payment" class="pay-btn">Pay Now ₹11,999</a></article>
+ <article class="plan-card"><h3>शुभारंभ योजना</h3><div class="plan-price">₹499</div><p class="plan-duration">3 महीने</p><details><summary>पूरी सुविधाएँ देखें</summary><ul><li>3 महीने की सक्रिय सदस्यता</li><li>स्वीकृत जैन प्रोफाइल देख सकेंगे</li><li>सदस्यता सक्रिय रहने पर उपलब्ध बायोडाटा देख सकेंगे</li><li>अपनी प्रोफाइल की जानकारी अपडेट कराने हेतु सहायता</li></ul></details><a class="pay-btn" href="#payment" data-plan="₹499 - 3 महीने">यह प्लान चुनें</a></article>
+ <article class="plan-card"><h3>परिचय योजना</h3><div class="plan-price">₹999</div><p class="plan-duration">7 महीने</p><details><summary>पूरी सुविधाएँ देखें</summary><ul><li>7 महीने की सक्रिय सदस्यता</li><li>स्वीकृत जैन प्रोफाइल देख सकेंगे</li><li>सदस्यता सक्रिय रहने पर उपलब्ध बायोडाटा देख सकेंगे</li><li>प्रोफाइल या लॉगिन संबंधी सहायता</li></ul></details><a class="pay-btn" href="#payment" data-plan="₹999 - 7 महीने">यह प्लान चुनें</a></article>
+ <article class="plan-card"><h3>परिवार योजना</h3><div class="plan-price">₹1,999</div><p class="plan-duration">18 महीने</p><details><summary>पूरी सुविधाएँ देखें</summary><ul><li>18 महीने की सक्रिय सदस्यता</li><li>स्वीकृत जैन प्रोफाइल देख सकेंगे</li><li>सदस्यता सक्रिय रहने पर उपलब्ध बायोडाटा देख सकेंगे</li><li>प्रोफाइल अपडेट और तकनीकी सहायता</li></ul></details><a class="pay-btn" href="#payment" data-plan="₹1,999 - 18 महीने">यह प्लान चुनें</a></article>
+ <article class="plan-card"><h3>आजीवन योजना</h3><div class="plan-price">₹2,999</div><p class="plan-duration">Lifetime Membership</p><details><summary>पूरी सुविधाएँ देखें</summary><ul><li>आजीवन सदस्यता (वेबसाइट सेवा जारी रहने तक)</li><li>स्वीकृत जैन प्रोफाइल देख सकेंगे</li><li>सदस्यता सक्रिय रहने पर उपलब्ध बायोडाटा देख सकेंगे</li><li>प्रोफाइल और लॉगिन सहायता</li></ul></details><a class="pay-btn" href="#payment" data-plan="₹2,999 - Lifetime">यह प्लान चुनें</a></article>
+ <article class="plan-card"><h3>व्यक्तिगत सहायता योजना</h3><div class="plan-price">₹5,999</div><p class="plan-duration">6 महीने</p><details><summary>पूरी सुविधाएँ देखें</summary><ul><li>6 महीने की सक्रिय सदस्यता</li><li>उपलब्ध स्वीकृत प्रोफाइल और बायोडाटा देखने की सुविधा</li><li>आपकी पसंद के अनुसार प्रोफाइल खोजने में व्यक्तिगत मार्गदर्शन</li><li>चुनी हुई प्रोफाइल की जानकारी समझने और अगला कदम तय करने में सहायता</li><li>सहायता के लिए प्राथमिक संपर्क</li></ul></details><a class="pay-btn" href="#payment" data-plan="₹5,999 - Personal Help 6 महीने">यह प्लान चुनें</a></article>
+ <article class="plan-card"><h3>प्रीमियम व्यक्तिगत सहायता</h3><div class="plan-price">₹11,999</div><p class="plan-duration">2 साल</p><details><summary>पूरी सुविधाएँ देखें</summary><ul><li>2 साल की सक्रिय सदस्यता</li><li>उपलब्ध स्वीकृत प्रोफाइल और बायोडाटा देखने की सुविधा</li><li>पसंद, शहर और अन्य प्राथमिकताओं के आधार पर व्यक्तिगत मार्गदर्शन</li><li>चुनी हुई प्रोफाइल पर आगे संपर्क करने के तरीके में सहायता</li><li>सदस्यता अवधि में प्राथमिकता के साथ सहायता</li></ul></details><a class="pay-btn" href="#payment" data-plan="₹11,999 - Personal Help 2 साल">यह प्लान चुनें</a></article>
 </div>
-<div class="payment-panel">
-<h3 id="payment">Pay by UPI / BharatPe QR</h3>
-
-<img src="IMG_1395.jpeg" alt="BharatPe Payment QR"
-
-style="width:260px;max-width:90%;border:1px solid #ddd;border-radius:12px;">
-
-<p>भुगतान के बाद रसीद Admin को भेजें। सदस्यता की पुष्टि Admin करेगा।</p>
-
+<p class="plan-note">महत्वपूर्ण: प्रोफाइल की उपलब्धता सदस्यों के रजिस्ट्रेशन और Admin Approval पर निर्भर है। व्यक्तिगत सहायता मार्गदर्शन है; किसी विशेष रिश्ते, जवाब या विवाह की गारंटी नहीं है। सदस्यता सक्रिय होने की पुष्टि Admin द्वारा भुगतान सत्यापन के बाद होगी।</p>
+<h3 id="payment">UPI / BharatPe QR से भुगतान करें</h3>
+<img src="IMG_1395.jpeg" alt="BharatPe Payment QR" style="width:260px;max-width:90%;border:1px solid #c9a24a;border-radius:12px;">
+<p>भुगतान के बाद नीचे जानकारी और रसीद भेजें। Admin भुगतान की पुष्टि करेगा।</p>
 <div id="payment">
-
-  <h2>Payment Confirmation</h2>
-
-  <form id="paymentForm">
-
-    <input type="text" placeholder="पूरा नाम" required>
-
-    <input type="tel" placeholder="मोबाइल नंबर" required>
-
-    <select required>
-
-      <option value="">Membership Plan चुनें</option>
-
-      <option>₹499 - 3 महीने</option>
-
-      <option>₹999 - 7 महीने</option>
-
-      <option>₹1,999 - 18 महीने</option>
-
-      <option>₹2,999 - Lifetime</option>
-
-      <option>₹5,999 - Personal Help 6 महीने</option>
-
-      <option>₹11,999 - Personal Help 2 साल</option>
-
-    </select>
-
-    <input type="text" placeholder="UPI Transaction ID" required>
-
-    <input type="file" accept="image/*" required>
-
-    <button type="submit">Payment Details भेजें</button>
-
-  </form>
-
+ <h2>Payment Confirmation</h2>
+ <form id="paymentForm">
+  <input type="text" placeholder="पूरा नाम" required>
+  <input type="tel" placeholder="मोबाइल नंबर" required>
+  <select id="selectedPlan" required>
+   <option value="">Membership Plan चुनें</option>
+   <option>₹499 - 3 महीने</option><option>₹999 - 7 महीने</option><option>₹1,999 - 18 महीने</option><option>₹2,999 - Lifetime</option><option>₹5,999 - Personal Help 6 महीने</option><option>₹11,999 - Personal Help 2 साल</option>
+  </select>
+  <input type="text" placeholder="UPI Transaction ID" required>
+  <input type="file" accept="image/*" required>
+  <button type="submit">Payment Details भेजें</button>
+ </form>
 </div>
-</div>
+<script>
+document.querySelectorAll('.jrs-membership [data-plan]').forEach(function(btn){btn.addEventListener('click',function(){var select=document.getElementById('selectedPlan');if(select)select.value=this.getAttribute('data-plan');});});
+</script>
 </section>
 <section id="member-login" style="padding:25px;max-width:450px;margin:20px auto;border:1px solid #ddd;border-radius:12px;">
   <h2>Member Login</h2>
