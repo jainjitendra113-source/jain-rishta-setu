@@ -75,6 +75,94 @@ const supabaseKey = "sb_publishable_wQ98cLAS75kE_vbpeduhaA_ZNdtNh96";
 
 const db = window.supabase.createClient(supabaseUrl,supabaseKey);
 
+function escapeBiodataText(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  }[ch]));
+}
+function renderBiodataWindow(profile, photoUrl, targetWindow) {
+  const fields = [
+    ["पूरा नाम", "full_name"],
+    ["लिंग", "gender"],
+    ["जन्म तारीख", "date_of_birth"],
+    ["लंबाई", "height"],
+    ["वैवाहिक स्थिति", "marital_status"],
+    ["बच्चों की संख्या", "children_count"],
+    ["मोबाइल", "mobile"],
+    ["ईमेल", "email"],
+    ["शहर", "city"],
+    ["राज्य", "state"],
+    ["शिक्षा", "education"],
+    ["व्यवसाय", "occupation"],
+    ["जैन संप्रदाय", "sampraday"],
+    ["उप-संप्रदाय", "sub_sampraday"],
+    ["गोत्र", "gotra"],
+    ["मातृ गोत्र", "maternal_gotra"],
+    ["समुदाय", "community"],
+    ["पिता का नाम", "father_name"],
+    ["पिता का व्यवसाय", "father_occupation"],
+    ["माता का नाम", "mother_name"],
+    ["माता का व्यवसाय", "mother_occupation"],
+    ["भाई", "brothers"],
+    ["बहनें", "sisters"],
+    ["मूल निवास", "family_origin"],
+    ["परिवार परिचय", "family_description"],
+    ["जन्म समय", "birth_time"],
+    ["जन्म स्थान", "birth_place"],
+    ["राशि", "rashi"],
+    ["कुंडली उपलब्ध", "kundli_available"],
+    ["जीवनसाथी की पसंदीदा उम्र", "partner_age_preference"],
+    ["जीवनसाथी की पसंदीदा शिक्षा", "partner_education_preference"],
+    ["पसंदीदा शहर/राज्य", "partner_location_preference"],
+    ["अन्य अपेक्षाएँ", "partner_expectations"]
+  ];
+  const rows = fields.map(([label, key]) => {
+    const value = profile[key];
+    if (value === null || value === undefined || String(value).trim() === "") return "";
+    return `<tr><th>${escapeBiodataText(label)}</th><td>${escapeBiodataText(value)}</td></tr>`;
+  }).join("");
+  const photo = photoUrl ? `<img class="photo" src="${escapeBiodataText(photoUrl)}" alt="Profile photo">` : "";
+  targetWindow.document.open();
+  targetWindow.document.write(`<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>${escapeBiodataText(profile.full_name || "Jain Rishta Setu")} - Biodata</title>
+  <style>
+    *{box-sizing:border-box}body{font-family:Georgia,"Noto Serif Devanagari",serif;background:#fffaf2;color:#321a20;margin:0;padding:24px}
+    .sheet{max-width:850px;margin:auto;background:#fffdf8;border:2px solid #c9a24a;border-radius:18px;padding:28px}
+    header{text-align:center;background:#3b0718;color:#f7e7a5;padding:22px;border-radius:12px;border-bottom:4px solid #c9a24a}
+    h1{margin:0;font-size:28px}header p{margin:6px 0 0}.intro{display:flex;gap:20px;align-items:center;margin:22px 0}
+    .photo{width:125px;height:145px;object-fit:cover;border:3px solid #c9a24a;border-radius:10px}
+    table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border:1px solid #dfcfaa;padding:10px;text-align:left;vertical-align:top}
+    th{width:34%;background:#f7edd8;color:#4b1425}td{overflow-wrap:anywhere}.actions{text-align:center;margin:20px}
+    button{background:#64152f;color:#fff2cf;border:1px solid #c9a24a;border-radius:20px;padding:12px 24px;font-weight:bold;cursor:pointer}
+    .foot{text-align:center;color:#765d43;margin-top:22px;font-size:13px}
+    @media print{body{background:white;padding:0}.sheet{border:0;border-radius:0;padding:10mm;max-width:none}.actions{display:none}tr{break-inside:avoid}}
+  </style></head><body><main class="sheet"><header><h1>Jain Rishta Setu</h1><p>जैन की शादी, जैन में</p><p>विवाह परिचय बायोडाटा</p></header>
+  <div class="intro">${photo}<div><h2>${escapeBiodataText(profile.full_name || "Jain Member")}</h2><p>जैन समाज के रिश्तों का अपना विश्वसनीय मंच</p></div></div>
+  <table><tbody>${rows || "<tr><td>जानकारी उपलब्ध नहीं</td></tr>"}</tbody></table>
+  <div class="foot">यह बायोडाटा सदस्य द्वारा दी गई जानकारी के आधार पर तैयार किया गया है। कृपया रिश्ते को आगे बढ़ाने से पहले जानकारी की पुष्टि करें।<br>© Jain Rishta Setu</div>
+  <div class="actions"><button onclick="window.print()">PDF सेव / प्रिंट करें</button></div>
+  </main></body></html>`);
+  targetWindow.document.close();
+}
+
+async function generateAdminBiodata(profileId) {
+  const newWindow = window.open("", "_blank");
+  if (!newWindow) { alert("कृपया इस वेबसाइट के लिए Pop-up अनुमति दें।"); return; }
+  const { data: profile, error } = await db.from("profiles").select("*").eq("id", profileId).maybeSingle();
+  if (error || !profile) {
+    newWindow.close();
+    alert("बायोडाटा की जानकारी नहीं मिल पाई: " + (error?.message || ""));
+    return;
+  }
+  let photoUrl = "";
+  if (profile.profile_photo) {
+    const { data: photo } = await db.storage.from("Profile Photo").createSignedUrl(profile.profile_photo, 3600);
+    if (photo?.signedUrl) photoUrl = photo.signedUrl;
+  }
+  renderBiodataWindow(profile, photoUrl, newWindow);
+}
+
+
 async function login(){
 
 const {data,error}=await db.auth.signInWithPassword({
@@ -144,7 +232,8 @@ ${photoUrl ? `<img src="${photoUrl}" width="100" style="border-radius:10px"><br>
 जीवनसाथी की पसंद: ${p.partner_age_preference||"—"}; ${p.partner_education_preference||"—"}; ${p.partner_location_preference||"—"}<br>
 अन्य अपेक्षाएँ: ${p.partner_expectations||"—"}
 <br><br>
-${biodataUrl ? `<a href="${biodataUrl}" target="_blank">बायोडाटा देखें / डाउनलोड करें</a><br>` : "बायोडाटा उपलब्ध नहीं"} 
+<button onclick="generateAdminBiodata('${p.id}')">बायोडाटा देखें / PDF बनाएँ</button><br>
+${biodataUrl ? `<a href="${biodataUrl}" target="_blank">पुराना अपलोड किया हुआ बायोडाटा देखें</a><br>` : ""}
 स्थिति: ${p.approval_status || "pending"}<br>
 
 <button onclick="updateStatus('${p.id}','approved')">Approve</button>
