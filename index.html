@@ -1264,6 +1264,72 @@ showPage(btn.dataset.page);
 showPage("home");
 })();
 </script>
+
+<style>
+body {
+  background: #fffaf2 !important;
+  color: #17233b !important;
+  font-family: "Poppins", Arial, sans-serif !important;
+}
+
+#jrs-premium-nav {
+  background: linear-gradient(110deg,#101b32,#263c5b) !important;
+  border-bottom: 2px solid #c6a15b;
+  padding: 16px !important;
+  box-shadow: 0 5px 22px #101b3230 !important;
+}
+
+#jrs-premium-nav .brand {
+  color: #f3d58e !important;
+  font-weight: 800;
+  letter-spacing: .4px;
+}
+
+#jrs-premium-nav button {
+  background: linear-gradient(135deg,#f6dfaa,#c6a15b) !important;
+  color: #17233b !important;
+  border: 1px solid #e8ca86 !important;
+  border-radius: 25px !important;
+  padding: 11px 17px !important;
+  font-weight: 700 !important;
+  transition: .25s;
+}
+
+#jrs-premium-nav button:hover {
+  background: #fff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px #c6a15b55;
+}
+
+button {
+  cursor: pointer;
+}
+
+section h2 {
+  color: #172b49;
+}
+
+input, select, textarea {
+  border: 1px solid #d8c49d !important;
+  border-radius: 10px !important;
+}
+
+@media(max-width:600px) {
+  #jrs-premium-nav {
+    justify-content: center;
+    gap: 7px;
+  }
+  #jrs-premium-nav .brand {
+    width: 100%;
+    text-align: center;
+  }
+  #jrs-premium-nav button {
+    padding: 9px 12px !important;
+    font-size: 12px;
+  }
+}
+</style>
+
 </body>
 
 </html>
