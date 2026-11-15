@@ -320,7 +320,7 @@ Welcome to Jain Rishta Setu
 
 <input type="text" name="full_name" placeholder="पूरा नाम" required>
 
-<select name="gender" required>
+<select name="gender">
 
 <option value="">लिंग चुनें</option>
 
@@ -329,12 +329,12 @@ Welcome to Jain Rishta Setu
 <option value="Female">महिला</option>
 
 </select>
-<input type="email" name="email" placeholder="ईमेल एड्रेस" required>
+<input type="email" name="email" placeholder="ईमेल एड्रेस">
 <input type="tel" name="mobile" placeholder="मोबाइल नंबर" required>
 
-<input type="text" name="city" placeholder="शहर" required>
+<input type="text" name="city" placeholder="शहर">
 
-<input type="text" name="state" placeholder="राज्य" required>
+<input type="text" name="state" placeholder="राज्य">
 
 <input type="text" name="education" placeholder="शिक्षा">
 
@@ -566,7 +566,7 @@ email: formData.get("email"),
     education: formData.get("education"),
 
     occupation: formData.get("occupation"),
-    date_of_birth: formData.get("date_of_birth"),
+    date_of_birth: formData.get("date_of_birth") || null,
     height: formData.get("height"),
     marital_status: formData.get("marital_status"),
     children_count: formData.get("children_count") || null,
@@ -583,7 +583,7 @@ email: formData.get("email"),
     sisters: formData.get("sisters") || null,
     family_origin: formData.get("family_origin"),
     family_description: formData.get("family_description"),
-    birth_time: formData.get("birth_time"),
+    birth_time: formData.get("birth_time") || null,
     birth_place: formData.get("birth_place"),
     rashi: formData.get("rashi"),
     kundli_available: formData.get("kundli_available"),
