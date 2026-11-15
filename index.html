@@ -229,17 +229,171 @@ textarea, select, input{max-width:100%;box-sizing:border-box}
 </head>
 
 <body>
-<section style="text-align:center;background:#300612;padding:20px;">
 
-  <img src="0C550376-34A8-4F85-B863-298D10A3533F.webp"
+<style>
+.jrs-home {
+  background:linear-gradient(125deg,#071638,#17104b,#39065b,#073c58);
+  color:white;
+  padding:28px 16px;
+  text-align:center;
+  overflow:hidden;
+}
+.jrs-hero {
+  max-width:1150px;
+  margin:auto;
+  padding:30px 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-around;
+  gap:20px;
+  flex-wrap:wrap;
+}
+.jrs-title {
+  color:#ffd65c!important;
+  font-size:clamp(38px,6vw,72px);
+  font-family:Georgia,serif;
+  text-shadow:0 3px 15px #e9a90070;
+  margin:10px 0;
+}
+.jrs-tagline {
+  font-size:clamp(19px,3vw,29px);
+  font-style:italic;
+}
+.jrs-temple {
+  width:125px;
+  height:125px;
+  object-fit:cover;
+  border-radius:18px;
+  border:3px solid #e7bf50;
+  box-shadow:0 0 22px #d9a72c;
+}
+.jrs-couple {
+  width:125px;
+  height:125px;
+  border:3px solid #e7bf50;
+  border-radius:50%;
+  background:linear-gradient(145deg,#64105d,#1c174b);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:62px;
+  box-shadow:0 0 24px #e6a6ed;
+}
+.jrs-features {
+  max-width:1200px;
+  margin:25px auto;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+.jrs-feature {
+  padding:23px 10px;
+  border-radius:18px;
+  color:white;
+  border:2px solid #f5d36c;
+  box-shadow:0 8px 20px #0006;
+}
+.jrs-feature:nth-child(1){background:linear-gradient(140deg,#087ed0,#101c75);}
+.jrs-feature:nth-child(2){background:linear-gradient(140deg,#079d65,#00452c);}
+.jrs-feature:nth-child(3){background:linear-gradient(140deg,#ef258d,#800047);}
+.jrs-feature:nth-child(4){background:linear-gradient(140deg,#ffd34d,#d98a00);color:#25133b;}
+.jrs-feature strong {display:block;font-size:19px;margin:8px 0;}
+.jrs-cta {
+  display:inline-block;
+  padding:15px 28px;
+  margin:8px;
+  border-radius:35px;
+  border:2px solid #ffdc70;
+  color:white!important;
+  text-decoration:none;
+  font-weight:bold;
+  font-size:17px;
+  box-shadow:0 5px 18px #0005;
+}
+.jrs-register {background:linear-gradient(120deg,#f21b87,#a00055);}
+.jrs-profiles {background:linear-gradient(120deg,#00a76b,#00532e);}
+.jrs-home h2 {color:#ffdc70!important;font-size:clamp(23px,4vw,36px);}
+@media(max-width:650px){
+ .jrs-features{grid-template-columns:repeat(2,1fr);}
+ .jrs-hero{padding:18px 5px;}
+ .jrs-temple,.jrs-couple{width:95px;height:95px;}
+ .jrs-couple{font-size:46px;}
+ .jrs-feature{padding:15px 7px;}
+ .jrs-feature strong{font-size:15px;}
+ .jrs-cta{font-size:14px;padding:12px 17px;}
+}
+</style>
 
-       alt="दिगंबर भगवान महावीर"
+<section class="jrs-home">
+  <div class="jrs-hero">
+    <div>
+      <div style="color:#ffd65c;font-size:30px;">♛ Jain Rishta Setu ♛</div>
+      <h1 class="jrs-title">Jain Rishta Setu</h1>
+      <div class="jrs-tagline">A Premium Jain Matrimonial Platform</div>
+      <p style="color:#ffdc70;font-size:17px;margin-top:20px;">
+        Trusted ✦ Verified Profiles ✦ Secure ✦ Community Focused
+      </p>
+    </div>
 
-       style="width:100%;max-width:650px;border-radius:15px;border:3px solid #d4af37;">
+    <div style="display:flex;gap:15px;align-items:center;justify-content:center;">
+      <img class="jrs-couple"
+src="69FF2776-ACF2-4399-9CC4-F195DA48F0BD.jpeg"
+alt="Wedding Couple"
+style="object-fit:cover;">
+       
+    
+      <div class="jrs-couple" aria-label="Wedding couple">👰🏻‍♀️🤵🏻</div>
+    </div>
+  </div>
 
-  <h2 style="color:#f7e7a5;">॥ ॐ ह्रीं श्री महावीराय नमः ॥</h2>
+  <div class="jrs-features">
+    <div class="jrs-feature">
+      <div style="font-size:35px;">♟</div>
+      <strong>Verified Profiles</strong>
+      Real & Trusted Members
+    </div>
+    <div class="jrs-feature">
+      <div style="font-size:35px;">🛡</div>
+      <strong>Secure & Private</strong>
+      Your Data is Safe
+    </div>
+    <div class="jrs-feature">
+      <div style="font-size:35px;">♡</div>
+      <strong>Serious Matches</strong>
+      For Jain Community
+    </div>
+    <div class="jrs-feature">
+      <div style="font-size:35px;">♛</div>
+      <strong>Premium Membership</strong>
+      Better Match Options
+    </div>
+  </div>
 
+  <h2>Find Your Life Partner in Jain Community</h2>
+
+  <p style="color:#f5dba0;">
+    एक समाज, अनेक परंपराएँ, रिश्तों की एक नई पहचान
+  </p>
+
+  <a href="#register" class="jrs-cta jrs-register">
+    ♡ Register Free Now
+  </a>
+
+  <a href="#approved" class="jrs-cta jrs-profiles">
+    ♧ View Approved Profiles
+  </a>
 </section>
+
+
+  
+
+       
+
+       
+
+  
+
+
   <nav style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;padding:15px;background:#300612;">
 
 <a href="#home" style="color:#f7e7a5;">Home</a>
