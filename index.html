@@ -224,6 +224,29 @@ textarea, select, input{max-width:100%;box-sizing:border-box}
 #registerForm h3{color:#64152f;border-bottom:1px solid #d4af37;padding-bottom:6px;margin-top:22px}
 #registerForm label{display:block;text-align:left;margin:10px auto 4px;max-width:520px;font-weight:bold}
 #registerForm input,#registerForm select,#registerForm textarea{width:min(100%,520px);padding:12px;margin:6px auto;border:1px solid #d4af37;border-radius:9px;background:#fffdf8}
+
+/* ROYAL MEMBERSHIP PRICING */
+#membership{padding:clamp(28px,5vw,60px) 16px!important;background:radial-gradient(circle at top,#fff7e4,#f3e5d2 72%)!important}
+#membership>h2{font-size:clamp(27px,4vw,38px);margin-bottom:8px}
+#membership .membership-intro{max-width:760px;margin:0 auto 28px;color:#725b60}
+#membership .plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:20px;max-width:1120px;margin:28px auto 42px;align-items:stretch}
+#membership .plan-card{position:relative;text-align:left;padding:24px 22px 22px;background:linear-gradient(155deg,#fffefa,#fff3dc);border:1px solid #c9a24a;border-radius:22px;box-shadow:0 12px 30px #3b07181a;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+#membership .plan-card:before{content:'';position:absolute;inset:0 0 auto;height:6px;background:linear-gradient(90deg,#8d6827,#e8d18b,#b58b36)}
+#membership .plan-card.featured{background:linear-gradient(150deg,#4a0a20,#761c39);color:#fff4d7;box-shadow:0 16px 36px #3b071833;transform:translateY(-4px)}
+#membership .plan-card.featured h3,#membership .plan-card.featured .plan-price,#membership .plan-card.featured .plan-duration{color:#f7e7b0}
+#membership .plan-card h3{font-size:20px;margin:5px 0 0;color:#4a0a20}
+#membership .plan-price{font-size:32px;font-weight:800;color:#4a0a20;line-height:1.2}
+#membership .plan-duration{font-size:14px;color:#806a59}
+#membership .plan-tag{align-self:flex-start;padding:4px 11px;border-radius:99px;background:#f0dfb2;color:#543717;font:bold 11px Arial,sans-serif;letter-spacing:.4px}
+#membership .plan-card.featured .plan-tag{background:#d4af37;color:#32101b}
+#membership .plan-card details{border-top:1px solid #d9c79f;padding-top:10px;margin-top:2px}
+#membership .plan-card.featured details{border-color:#9c6b62}
+#membership .plan-card summary{cursor:pointer;font-weight:bold;color:inherit;padding:4px 0}
+#membership .plan-card ul{padding-left:19px;margin:10px 0;color:inherit;line-height:1.8;font-size:14px}
+#membership .plan-card .pay-btn{display:block;text-align:center;text-decoration:none;margin: auto 0 0;background:linear-gradient(135deg,#d9b85f,#b58b36)!important;color:#35101b!important;border:1px solid #f0d98e!important;border-radius:12px!important}
+#membership .payment-panel{max-width:720px;margin:20px auto;padding:24px 18px;background:#fffdf8;border:1px solid #c9a24a;border-radius:22px;box-shadow:0 12px 30px #3b07181a}
+@media(max-width:640px){#membership .plan-card.featured{transform:none}}
+
 </style>
 
 </head>
@@ -776,24 +799,18 @@ const { error } = await db.from("membership_payments").insert({
   <div id="approvedProfiles">रिश्ते लोड हो रहे हैं...</div>
 
 </section>
-<section id="membership" style="padding:25px;text-align:center;background:#fff7f9;">
-
+<section id="membership">
 <h2>Jain Rishta Setu Membership Plans</h2>
-
-<div class="profile">₹499 – 3 महीने</div>
-  <a href="#payment" class="pay-btn">Pay Now ₹499</a>
-
-<div class="profile">₹999 – 7 महीने</div>
-  <a href="#payment" class="pay-btn">Pay Now ₹999</a>
-
-<div class="profile">₹1,999 – 18 महीने</div>
-<a href="#payment" class="pay-btn">Pay Now ₹1,999</a>
-<div class="profile">₹2,999 – Lifetime Membership</div>
-<a href="#payment" class="pay-btn">Pay Now ₹2,999</a>
-<div class="profile">₹5,999 – Personal Help (6 महीने)</div>
-<a href="#payment" class="pay-btn">Pay Now ₹5,999</a>
-<div class="profile">₹11,999 – Personal Help (2 साल)</div>
-<a href="#payment" class="pay-btn">Pay Now ₹11,999</a>
+<p class="membership-intro">अपने परिवार की आवश्यकता के अनुसार सदस्यता चुनें। हर प्लान की सुविधाएँ जानने के लिए “सुविधाएँ देखें” खोलें।</p>
+<div class="plan-grid">
+  <article class="plan-card"><span class="plan-tag">STARTER</span><h3>परिचय प्लान</h3><div class="plan-price">₹499</div><div class="plan-duration">3 महीने की सदस्यता</div><details><summary>इस प्लान की सुविधाएँ देखें</summary><ul><li>सदस्यता अवधि में Verified Profiles देखना</li><li>चुने हुए प्रोफाइल का बायोडाटा देखना</li><li>सदस्य सहायता के माध्यम से सामान्य मार्गदर्शन</li></ul></details><a href="#payment" class="pay-btn">Pay Now ₹499</a></article>
+  <article class="plan-card"><span class="plan-tag">VALUE</span><h3>सिल्वर प्लान</h3><div class="plan-price">₹999</div><div class="plan-duration">7 महीने की सदस्यता</div><details><summary>इस प्लान की सुविधाएँ देखें</summary><ul><li>सदस्यता अवधि में Verified Profiles देखना</li><li>चुने हुए प्रोफाइल का बायोडाटा देखना</li><li>रिश्ते के लिए संपर्क अनुरोध भेजने में सहायता</li><li>सामान्य सदस्य सहायता</li></ul></details><a href="#payment" class="pay-btn">Pay Now ₹999</a></article>
+  <article class="plan-card featured"><span class="plan-tag">POPULAR</span><h3>गोल्ड प्लान</h3><div class="plan-price">₹1,999</div><div class="plan-duration">18 महीने की सदस्यता</div><details><summary>इस प्लान की सुविधाएँ देखें</summary><ul><li>18 महीने तक Verified Profiles देखना</li><li>चुने हुए प्रोफाइल का बायोडाटा देखना</li><li>रिश्ते के लिए संपर्क अनुरोध में सहायता</li><li>प्राथमिकता के साथ सदस्य सहायता</li></ul></details><a href="#payment" class="pay-btn">Pay Now ₹1,999</a></article>
+  <article class="plan-card"><span class="plan-tag">LONG TERM</span><h3>लाइफटाइम प्लान</h3><div class="plan-price">₹2,999</div><div class="plan-duration">लाइफटाइम सदस्यता</div><details><summary>इस प्लान की सुविधाएँ देखें</summary><ul><li>प्लेटफॉर्म की उपलब्ध सदस्य सुविधाओं का लाइफटाइम उपयोग</li><li>Verified Profiles देखना</li><li>चुने हुए प्रोफाइल का बायोडाटा देखना</li><li>सामान्य सदस्य सहायता</li></ul></details><a href="#payment" class="pay-btn">Pay Now ₹2,999</a></article>
+  <article class="plan-card"><span class="plan-tag">PERSONAL SUPPORT</span><h3>पर्सनल हेल्प – 6 महीने</h3><div class="plan-price">₹5,999</div><div class="plan-duration">6 महीने की व्यक्तिगत सहायता</div><details><summary>इस प्लान की सुविधाएँ देखें</summary><ul><li>सदस्यता अवधि में प्रोफाइल खोजने में व्यक्तिगत सहायता</li><li>परिवार की पसंद के अनुसार उपयुक्त प्रोफाइल छाँटने में मदद</li><li>परिचय और बातचीत आगे बढ़ाने में मार्गदर्शन</li><li>नियमित सहायता और फॉलो-अप</li></ul></details><a href="#payment" class="pay-btn">Pay Now ₹5,999</a></article>
+  <article class="plan-card"><span class="plan-tag">PREMIUM SUPPORT</span><h3>पर्सनल हेल्प – 2 साल</h3><div class="plan-price">₹11,999</div><div class="plan-duration">2 साल की व्यक्तिगत सहायता</div><details><summary>इस प्लान की सुविधाएँ देखें</summary><ul><li>2 साल तक व्यक्तिगत रिश्ता खोज सहायता</li><li>परिवार की पसंद के अनुसार प्रोफाइल शॉर्टलिस्ट करने में मदद</li><li>परिचय और बातचीत आगे बढ़ाने में मार्गदर्शन</li><li>नियमित फॉलो-अप और प्राथमिकता सहायता</li></ul></details><a href="#payment" class="pay-btn">Pay Now ₹11,999</a></article>
+</div>
+<div class="payment-panel">
 <h3 id="payment">Pay by UPI / BharatPe QR</h3>
 
 <img src="IMG_1395.jpeg" alt="BharatPe Payment QR"
@@ -838,6 +855,7 @@ style="width:260px;max-width:90%;border:1px solid #ddd;border-radius:12px;">
 
   </form>
 
+</div>
 </div>
 </section>
 <section id="member-login" style="padding:25px;max-width:450px;margin:20px auto;border:1px solid #ddd;border-radius:12px;">
