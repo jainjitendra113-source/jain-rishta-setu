@@ -1195,6 +1195,75 @@ if ("serviceWorker" in navigator) {
 }
 
 </script>
+<style>
+#jrs-premium-nav{
+position:sticky;top:0;z-index:9999;
+background:#20202b;color:white;
+padding:14px;display:flex;gap:10px;
+align-items:center;flex-wrap:wrap;
+box-shadow:0 3px 12px #0003;
+}
+#jrs-premium-nav button{
+background:#d4af65;color:#20202b;
+border:0;padding:11px 15px;
+border-radius:8px;font-weight:bold;
+cursor:pointer;
+}
+#jrs-premium-nav .brand{
+font-size:19px;font-weight:bold;
+color:#f5d994;margin-right:auto;
+}
+</style>
+
+<script>
+(function(){
+const ids=[
+"register","approved","membership",
+"member-login","myMembership","about","contact"
+];
+
+const pages=ids.map(id=>document.getElementById(id))
+.filter(Boolean);
+
+const sections=Array.from(document.body.children)
+.filter(el=>el.tagName==="SECTION");
+
+const home=sections.find(el=>!ids.includes(el.id));
+
+const nav=document.createElement("nav");
+nav.id="jrs-premium-nav";
+
+nav.innerHTML=`
+<div class="brand">♛ Jain Rishta Setu</div>
+<button data-page="home">Home</button>
+<button data-page="register">Register</button>
+<button data-page="approved">Profiles</button>
+<button data-page="membership">Plans</button>
+<button data-page="member-login">Login</button>
+<button data-page="myMembership">My Membership</button>
+<button data-page="about">About</button>
+<button data-page="contact">Contact</button>
+`;
+
+document.body.insertBefore(nav,document.body.firstChild);
+
+function showPage(id){
+sections.forEach(el=>el.style.display="none");
+const target=id==="home"?home:
+document.getElementById(id);
+if(target) target.style.display="block";
+window.scrollTo(0,0);
+}
+
+nav.querySelectorAll("button").forEach(btn=>{
+btn.addEventListener("click",()=>{
+showPage(btn.dataset.page);
+});
+});
+
+showPage("home");
+})();
+</script>
 </body>
 
 </html>
